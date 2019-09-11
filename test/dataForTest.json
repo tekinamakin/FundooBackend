@@ -1,0 +1,45 @@
+{
+    "registration"  : {
+        "firstName" : "Ankit",
+        "lastName"  : "Chidrawar",
+        "email"     : "Ankit@gmail.com",
+        "password"  : "123456"
+    },
+    
+    "login"         : {
+        "email"     : "JohnWick@gmail.com",
+        "password"  : "123456"
+    },
+    
+   
+    "createNote"    : {
+        
+            "title":"blank notes with hidden content",
+            "description":"hiiii"
+                         
+        },
+       
+    
+    
+    "deleteNote"    : {
+        "id"        : "blank notes with hidden content",
+        "noteId"    : "hiiii"
+    },
+    "editTitle"     : {
+        "userId"        : "5d418146f0d82b54457f847f",
+        "_id"    : "5d490eaa23d787236792d902",
+        "title"     : "Work Hard"
+
+    },
+    
+     "isArchive"       : {
+        "id"          : "5ced34f489c0873f1a50af18",
+        "noteId"      : "5cf210a037208634232e9977",
+        "archive"     : "true"
+    },
+    "reminder"        : {
+        "id"          : "5ced34f489c0873f1a50af18",
+        "noteId"      : "5d061e43e8a458517b33d547",
+        "reminder"    : "jan 18 2019 8:00 AM"
+    }          
+}
