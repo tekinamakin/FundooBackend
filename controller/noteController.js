@@ -153,10 +153,6 @@ exports.updateNote = (req, res) => {
 
 }
 
-
-
-
-
 exports.isArchived = (req, res) => {
     try {
         req.checkBody('noteID', "note Id required").not().isEmpty();
@@ -190,8 +186,6 @@ exports.isArchived = (req, res) => {
         });
     }
 }
-
-
 
 exports.pagination = (req, res) => {
     try {
@@ -374,10 +368,6 @@ exports.getAllNotes = (req, res) => {
         //     res.status(200).send(response)
         // }
     }
-
-
-
-
     catch (error) {
         console.log("----------catch in getAllNotes", error);
 
