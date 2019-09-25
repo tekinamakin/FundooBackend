@@ -33,102 +33,102 @@ var user = mongoose.model('User', userSchema)
 function userModel() { }//class function
 
 
-userModel.prototype.findUser = (email) => {
-    return new Promise((resolve, reject) => {
-        user.find({ "email": email }, ['_id', "firstName", "lastName", "password"]).then((data) => {
-            if (data.length > 0) {
-                reject({ "message": "email already exist", "data": data })
-            }
-            else {
-                resolve({ "data": data })
-            }
-        }).catch((err) => {
-            reject({ "message": "error in finding email" })
-        })
-
-    })
-}
-
-
-userModel.prototype.saveUserModel = (userData) => {
-    return new Promise((resolve, reject) => {
-        let userDetails = new user({
-            "firstName": userData.firstName,
-            "lastName": userData.lastName,
-            "email": userData.email,
-            "password": userData.password
-        })
-        userDetails.save().then((data) => {
-            resolve({ "message": "registration succesful" })
-        }).catch((err) => {
-            reject({ "message": "registration failed" })
-        })
-    })
-}
-
-
-// //creating a registration model
-// userModel.prototype.create = (userData, callback) => {
-
-//     //checking if email address already exists
-//     user.findOne({ "email": userData.email }, (err, data) => {
-//         console.log("content in data" + data)
-//         if (err) {
-//             console.log('error in registration', err)
-//             callback(err)
-//         }
-//         else {
-//             if (data > 0) {
-//                 //checks if user is already present 
-//                 console.log("user already exists", data)
-//                 callback('user already has an account')
+// userModel.prototype.findUser = (email) => {
+//     return new Promise((resolve, reject) => {
+//         user.find({ "email": email }, ['_id', "firstName", "lastName", "password"]).then((data) => {
+//             if (data.length > 0) {
+//                 reject({ "message": "email already exist", "data": data })
 //             }
-
 //             else {
-//                 //creates a new user 
-
-//                 var newUser = new user({
-//                     "firstName": userData.firstName,
-//                     "lastName": userData.lastName,
-//                     "email": userData.email,
-//                     "password": userData.password
-
-
-
-//                 });
-//                 //using bcrypt to hash the password
-//                 bcrypt.genSalt(10, (err, salt) => {
-//                     bcrypt.hash(newUser.password, salt, (err, hash) => {
-//                         if (err) throw err;
-//                         newUser.password = hash;
-//                         //     // Save the user in the database
-//                         newUser.save((err, result) => {
-//                             if (err) {
-
-//                                 callback(err)
-//                             }
-//                             else {
-
-//                                 console.log('user registered successfully')
-
-//                                 callback(null, result)
-//                             }
-
-//                         })
-//                     });
-//                 });
-
-
-
-
-
-
+//                 resolve({ "data": data })
 //             }
-//         }
-//     })
+//         }).catch((err) => {
+//             reject({ "message": "error in finding email" })
+//         })
 
-//     // 
+//     })
 // }
+
+
+// userModel.prototype.saveUserModel = (userData) => {
+//     return new Promise((resolve, reject) => {
+//         let userDetails = new user({
+//             "firstName": userData.firstName,
+//             "lastName": userData.lastName,
+//             "email": userData.email,
+//             "password": userData.password
+//         })
+//         userDetails.save().then((data) => {
+//             resolve({ "message": "registration succesful" })
+//         }).catch((err) => {
+//             reject({ "message": "registration failed" })
+//         })
+//     })
+// }
+
+
+//creating a registration model
+userModel.prototype.create = (userData, callback) => {
+
+    //checking if email address already exists
+    user.findOne({ "email": userData.email }, (err, data) => {
+        console.log("content in data" + data)
+        if (err) {
+            console.log('error in registration', err)
+            callback(err)
+        }
+        else {
+            if (data > 0) {
+                //checks if user is already present 
+                console.log("user already exists", data)
+                callback('user already has an account')
+            }
+
+            else {
+                //creates a new user 
+
+                var newUser = new user({
+                    "firstName": userData.firstName,
+                    "lastName": userData.lastName,
+                    "email": userData.email,
+                    "password": userData.password
+
+
+
+                });
+                //using bcrypt to hash the password
+                bcrypt.genSalt(10, (err, salt) => {
+                    bcrypt.hash(newUser.password, salt, (err, hash) => {
+                        if (err) throw err;
+                        newUser.password = hash;
+                        //     // Save the user in the database
+                        newUser.save((err, result) => {
+                            if (err) {
+
+                                callback(err)
+                            }
+                            else {
+
+                                console.log('user registered successfully')
+
+                                callback(null, result)
+                            }
+
+                        })
+                    });
+                });
+
+
+
+
+
+
+            }
+        }
+    })
+
+    // 
+}
 
 
 

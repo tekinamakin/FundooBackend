@@ -4,74 +4,7 @@ const s3 = require('../middleware/s3.config');
 
 const tokens = require("../middleware/tokenAccess")
 
-// module.exports.register = (req, res) => {
-//   try {
-//     console.log("inside controller of reg", req.body)
-
-//     req.checkBody('firstName').isAlpha()
-//       .withMessage('firstname must have alphabetical characters')
-//       .isLength({ min: 3 })
-//       .withMessage("minimum 3 alphabets required in first name")
-
-//     req.checkBody("lastName").isAlpha()
-//       .withMessage("lastname must have alphabetical characters")
-//       .isLength({ min: 3 })
-//       .withMessage("minimum 3 alphabets required in last name")
-
-//     req.checkBody('email').isEmail()
-//       .withMessage('Email is not valid')
-
-//     req.checkBody('password')
-//       .isLength({ min: 3 })
-//       .withMessage('min 3 alphabets required')
-//       .isLength({ max: 10 })
-//       .withMessage("max 10 alphabets are allowed in password")
-
-//     console.log("data send by user", userData)
-//     var response = {}
-//     var errors = req.validationErrors()
-//     if (errors) {
-//       response.sucess = false,
-//         response.result = errors,
-//         res.status(400).send(response);
-//     }
-//     else {
-//       var userData = {
-//         firstName: req.body.firstName,
-//         lastName: req.body.lastName,
-//         email: req.body.email,
-//         password: req.body.password
-
-//       }
-//       service.register(userData, (err, result) => {
-//         if (err || result === undefined) {
-//           response.sucess = false,
-//             response.error = err,
-//             res.status(400).send(response)
-//         }
-//         else {
-//           response.sucess = true,
-//             response.result = result,
-//             res.status(200).send(response);
-//         }
-//       })
-//     }
-
-//   }
-//   catch (error) {
-//     console.log("Registration Controller Catch ", error);
-//     res.status(400).send({
-//       success: false,
-//       message: "Registration Controller catch"
-//     });
-//   }
-// }
-
-
-
-//Registration with promises
-
-exports.register = (req, res) => {
+module.exports.register = (req, res) => {
   try {
     console.log("inside controller of reg", req.body)
 
@@ -110,27 +43,94 @@ exports.register = (req, res) => {
         password: req.body.password
 
       }
-      let regPromise = service.register(userData)
-      regPromise.then((data) => {
-        response.success = true;
-        response.message = "User registered successfully"
-        response.data = data
-        res.status(200).send(response)
-
-      },
-        (err) => {
-          response.success = false;
-          response.message = "Problem while registration of user"
-          response.err = err
-          res.status(422).send(response)
-        })
+      service.register(userData, (err, result) => {
+        if (err || result === undefined) {
+          response.sucess = false,
+            response.error = err,
+            res.status(400).send(response)
+        }
+        else {
+          response.sucess = true,
+            response.result = result,
+            res.status(200).send(response);
+        }
+      })
     }
+
   }
   catch (error) {
-    console.log("Getting error in the catch block of register controller", error);
-
+    console.log("Registration Controller Catch ", error);
+    res.status(400).send({
+      success: false,
+      message: "Registration Controller catch"
+    });
   }
 }
+
+
+
+//Registration with promises
+
+// exports.register = (req, res) => {
+//   try {
+//     console.log("inside controller of reg", req.body)
+
+//     req.checkBody('firstName').isAlpha()
+//       .withMessage('firstname must have alphabetical characters')
+//       .isLength({ min: 3 })
+//       .withMessage("minimum 3 alphabets required in first name")
+
+//     req.checkBody("lastName").isAlpha()
+//       .withMessage("lastname must have alphabetical characters")
+//       .isLength({ min: 3 })
+//       .withMessage("minimum 3 alphabets required in last name")
+
+//     req.checkBody('email').isEmail()
+//       .withMessage('Email is not valid')
+
+//     req.checkBody('password')
+//       .isLength({ min: 3 })
+//       .withMessage('min 3 alphabets required')
+//       .isLength({ max: 10 })
+//       .withMessage("max 10 alphabets are allowed in password")
+
+//     console.log("data send by user", userData)
+//     var response = {}
+//     var errors = req.validationErrors()
+//     if (errors) {
+//       response.sucess = false,
+//         response.result = errors,
+//         res.status(400).send(response);
+//     }
+//     else {
+//       var userData = {
+//         firstName: req.body.firstName,
+//         lastName: req.body.lastName,
+//         email: req.body.email,
+//         password: req.body.password
+
+//       }
+//       let regPromise = service.register(userData)
+//       regPromise.then((data) => {
+//         response.success = true;
+//         response.message = "User registered successfully"
+//         response.data = data
+//         res.status(200).send(response)
+
+//       },
+//         (err) => {
+//           response.success = false;
+//           response.message = "Problem while registration of user"
+//           response.err = err
+//           res.status(422).send(response)
+//         })
+//     }
+//   }
+//   catch (error) {
+//     console.log("Getting error in the catch block of register controller", error);
+
+//   }
+// }
 
 
 
