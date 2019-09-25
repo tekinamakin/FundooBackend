@@ -39,14 +39,7 @@ exports.createNote = (req, res) => {
                     response.result = result
                     return res.status(200).send(response)
                 }
-
-
-
-
             })
-
-
-
         }
     } catch (error) {
         console.log("catching error in catch block of controller")
