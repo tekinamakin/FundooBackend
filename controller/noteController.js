@@ -336,45 +336,45 @@ exports.pushNotification = (req, res) => {
 
 exports.getAllNotes = (req, res) => {
     try {
-        var details = {}
+        //var details = {}
         var response = {}
-        redis.getRedis(details, (error, data) => {
-            if (error) {
+        //redis.getRedis(details, (error, data) => {
+        //if (error) {
 
-                var userId = {
-                    'userId': req.decoded.payload._id
-                }
-                var setValue = {
-                    "trash": false,
-                    "archive": false
-                }
-                console.log("printing userId over here =====>", userId);
+        var userId = {
+            'userId': req.decoded.payload._id
+        }
+        var setValue = {
+            "trash": false,
+            "archive": false
+        }
+        console.log("printing userId over here =====>", userId);
 
-                noteServices.getAllNotes(userId, setValue, (err, result) => {
-                    if (err) {
-                        response.status = false;
-                        response.error = err;
-                        res.status(500).send(response);
-                    } else {
-                        redis.setRedis(result)
-                        response.status = true;
-                        response.result = result;
-                        res.status(200).send(result)
-                    }
-                })
-            }
+        noteServices.getAllNotes(userId, setValue, (err, result) => {
+            if (err) {
+                response.status = false;
+                response.error = err;
+                res.status(500).send(response);
+            } else {
 
-            else {
-                console.log("printing user id", req.decoded.payload._id);
-
-                response.id = req.decoded.payload._id
-                // response.data = result
-                response.status = true
-                response.result = data
-                res.status(200).send(response)
+                response.status = true;
+                response.result = result;
+                res.status(200).send(result)
             }
         })
+        //}
+
+        // else {
+        //     console.log("printing user id", req.decoded.payload._id);
+
+        //     response.id = req.decoded.payload._id
+        //     // response.data = result
+        //     response.status = true
+        //     response.result = data
+        //     res.status(200).send(response)
+        // }
     }
+
 
 
 

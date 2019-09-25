@@ -9,7 +9,7 @@ var server = require('../server')
  * @description : Reading JSON
  */
 var fs = require('fs')
-function readFile () {
+function readFile() {
   console.log(__dirname)
   var obj = fs.readFileSync(`${__dirname}/dataForTest.json`)
   var data = JSON.parse(obj)
@@ -33,7 +33,7 @@ describe('status and content', () => {
       done()
     })
   })
-  
+
   /**
        * @description : It will create for testing Login Api.
        */
@@ -49,8 +49,8 @@ describe('status and content', () => {
       done()
     })
   })
-  
-  
+
+
 
   /**
        * @description : It will create for testing create note Api.

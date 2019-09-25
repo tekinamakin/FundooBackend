@@ -6,7 +6,7 @@
   "scripts": {
     "test": "standard && mocha --timeout 30000 ./test/**/*.js --exit || true",
     "coverage": "./node_modules/.bin/nyc -r cobertura -r text-summary -r html npm test",
-    "start": "node server.js",
+    "start": "nodemon server.js",
     "server": "nodemon server.js",
     "dev": "concurrently \"npm run server\" \"npm run client\""
   },
