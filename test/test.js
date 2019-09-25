@@ -15,12 +15,17 @@ function readFile() {
   var data = JSON.parse(obj)
   return data
 }
+// function readFile() {
+//   var obj = fs.readFileSync('../fundoo-backend/test/dataForTest.json')
+//   var data = JSON.parse(obj)
+//   return data
+// }
 
 describe('status and content', () => {
   var data = readFile()
   /**
-       * @description : It will create for testing Registration Api.
-       */
+  * @description : It will create for testing Registration Api.
+  */
   it('Registration', (done) => {
     chai.request(server).post('/register').send(data.registration).end((err, res) => {
       if (err) {
@@ -86,8 +91,8 @@ describe('status and content', () => {
   /**
        * @description : It will create for testing edit Title Api.
        */
-  it('Edit Title', (done) => {
-    chai.request(server).post('/editTitle').send(data.editTitle).end((err, res) => {
+  it('updateNote', (done) => {
+    chai.request(server).post('/updateNote').send(data.updateNote).end((err, res) => {
       if (err) {
         console.log('Expected Body ==> ', err)
         err.should.have.status(400)
@@ -117,8 +122,8 @@ describe('status and content', () => {
   /**
        * @description : It will create for testing reminder Api.
        */
-  it('Reminder', (done) => {
-    chai.request(server).post('/reminder').send(data.reminder).end((err, res) => {
+  it('createLabel', (done) => {
+    chai.request(server).post('/createlabel').send(data.reminder).end((err, res) => {
       if (err) {
         console.log('Expected Body ==> ', err)
         err.should.have.status(400)

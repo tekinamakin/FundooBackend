@@ -4,7 +4,7 @@
   "description": "fundoonotes",
   "main": "server.js",
   "scripts": {
-    "test": "standard && mocha --timeout 30000 ./test/**/*.js --exit || true",
+    "test": "./node_modules/.bin/mocha --reporter spec",
     "coverage": "./node_modules/.bin/nyc -r cobertura -r text-summary -r html npm test",
     "start": "nodemon server.js",
     "server": "nodemon server.js",
@@ -17,7 +17,6 @@
     "bcrypt": "^3.0.6",
     "bcryptjs": "^2.4.3",
     "body-parser": "^1.19.0",
-    "chai": "^4.2.0",
     "concurrently": "^4.1.1",
     "cors": "^2.8.5",
     "dotenv": "^8.0.0",
@@ -43,6 +42,8 @@
     "winston": "^3.2.1"
   },
   "devDependencies": {
+    "chai": "^4.2.0",
+    "chai-http": "^4.3.0",
     "nodemon": "^1.19.1",
     "standard": "^14.3.1"
   }

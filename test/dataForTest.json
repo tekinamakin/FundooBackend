@@ -1,45 +1,37 @@
 {
-    "registration"  : {
-        "firstName" : "Ankit",
-        "lastName"  : "Chidrawar",
-        "email"     : "Ankit@gmail.com",
-        "password"  : "123456"
+    "registration": {
+        "firstName": "Ankit",
+        "lastName": "Chidrawar",
+        "email": "Ankit@gmail.com",
+        "password": "123456"
     },
-    
-    "login"         : {
-        "email"     : "JohnWick@gmail.com",
-        "password"  : "123456"
+    "login": {
+        "email": "anik8nikam@gmail.com",
+        "password": "123456"
     },
-    
-   
-    "createNote"    : {
-        
-            "title":"blank notes with hidden content",
-            "description":"hiiii"
-                         
-        },
-       
-    
-    
-    "deleteNote"    : {
-        "id"        : "blank notes with hidden content",
-        "noteId"    : "hiiii"
+    "createNote": {
+        "userId": "5d8871f311193c32add90bb5",
+        "title": "blank notes with hidden content",
+        "description": "hiiii",
+        "headers": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJwYXlsb2FkIjp7Il9pZCI6IjVkODg3MWYzMTExOTNjMzJhZGQ5MGJiNSJ9LCJpYXQiOjE1Njk0MTE3MjksImV4cCI6MTU2OTQ5ODEyOX0.62mDIbM4Evm0985-zL_9u5awuscwecOw1tHqS3PG6zQ"
     },
-    "editTitle"     : {
-        "userId"        : "5d418146f0d82b54457f847f",
-        "_id"    : "5d490eaa23d787236792d902",
-        "title"     : "Work Hard"
-
+    "deleteNote": {
+        "id": "blank notes with hidden content",
+        "noteId": "hiiii"
     },
-    
-     "isArchive"       : {
-        "id"          : "5ced34f489c0873f1a50af18",
-        "noteId"      : "5cf210a037208634232e9977",
-        "archive"     : "true"
+    "updateNote": {
+        "userId": "5d8871f311193c32add90bb5",
+        "_id": "5d8890236bfd87417ad456bd",
+        "title": "Work Hard",
+        "headers": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJwYXlsb2FkIjp7Il9pZCI6IjVkODg3MWYzMTExOTNjMzJhZGQ5MGJiNSJ9LCJpYXQiOjE1Njk0MTE3MjksImV4cCI6MTU2OTQ5ODEyOX0.62mDIbM4Evm0985-zL_9u5awuscwecOw1tHqS3PG6zQ"
     },
-    "reminder"        : {
-        "id"          : "5ced34f489c0873f1a50af18",
-        "noteId"      : "5d061e43e8a458517b33d547",
-        "reminder"    : "jan 18 2019 8:00 AM"
-    }          
+    "isArchive": {
+        "id": "5ced34f489c0873f1a50af18",
+        "noteId": "5cf210a037208634232e9977",
+        "archive": "true"
+    },
+    "createlabel": {
+        "userId": "5d8871f311193c32add90bb5",
+        "_id": "5d8b6dad3fab0b4e27ad4f41"
+    }
 }
