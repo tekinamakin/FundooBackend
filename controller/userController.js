@@ -4,7 +4,74 @@ const s3 = require('../middleware/s3.config');
 
 const tokens = require("../middleware/tokenAccess")
 
-module.exports.registration = (req, res) => {
+// module.exports.register = (req, res) => {
+//   try {
+//     console.log("inside controller of reg", req.body)
+
+//     req.checkBody('firstName').isAlpha()
+//       .withMessage('firstname must have alphabetical characters')
+//       .isLength({ min: 3 })
+//       .withMessage("minimum 3 alphabets required in first name")
+
+//     req.checkBody("lastName").isAlpha()
+//       .withMessage("lastname must have alphabetical characters")
+//       .isLength({ min: 3 })
+//       .withMessage("minimum 3 alphabets required in last name")
+
+//     req.checkBody('email').isEmail()
+//       .withMessage('Email is not valid')
+
+//     req.checkBody('password')
+//       .isLength({ min: 3 })
+//       .withMessage('min 3 alphabets required')
+//       .isLength({ max: 10 })
+//       .withMessage("max 10 alphabets are allowed in password")
+
+//     console.log("data send by user", userData)
+//     var response = {}
+//     var errors = req.validationErrors()
+//     if (errors) {
+//       response.sucess = false,
+//         response.result = errors,
+//         res.status(400).send(response);
+//     }
+//     else {
+//       var userData = {
+//         firstName: req.body.firstName,
+//         lastName: req.body.lastName,
+//         email: req.body.email,
+//         password: req.body.password
+
+//       }
+//       service.register(userData, (err, result) => {
+//         if (err || result === undefined) {
+//           response.sucess = false,
+//             response.error = err,
+//             res.status(400).send(response)
+//         }
+//         else {
+//           response.sucess = true,
+//             response.result = result,
+//             res.status(200).send(response);
+//         }
+//       })
+//     }
+
+//   }
+//   catch (error) {
+//     console.log("Registration Controller Catch ", error);
+//     res.status(400).send({
+//       success: false,
+//       message: "Registration Controller catch"
+//     });
+//   }
+// }
+
+
+
+//Registration with promises
+
+exports.register = (req, res) => {
   try {
     console.log("inside controller of reg", req.body)
 
@@ -30,16 +97,12 @@ module.exports.registration = (req, res) => {
     console.log("data send by user", userData)
     var response = {}
     var errors = req.validationErrors()
-
-
-
     if (errors) {
       response.sucess = false,
         response.result = errors,
         res.status(400).send(response);
     }
     else {
-
       var userData = {
         firstName: req.body.firstName,
         lastName: req.body.lastName,
@@ -47,34 +110,28 @@ module.exports.registration = (req, res) => {
         password: req.body.password
 
       }
-      service.registration(userData, (err, result) => {
+      let regPromise = service.register(userData)
+      regPromise.then((data) => {
+        response.success = true;
+        response.message = "User registered successfully"
+        response.data = data
+        res.status(200).send(response)
 
-        if (err || result === undefined) {
-          response.sucess = false,
-            response.error = err,
-            res.status(400).send(response)
-        }
-        else {
-          response.sucess = true,
-            response.result = result,
-            res.status(200).send(response);
-        }
-      })
+      },
+        (err) => {
+          response.success = false;
+          response.message = "Problem while registration of user"
+          response.err = err
+          res.status(422).send(response)
+        })
     }
-
   }
   catch (error) {
-    console.log("Registration Controller Catch ", error);
-    res.status(400).send({
-      success: false,
-      message: "Registration Controller catch"
-    });
+    console.log("Getting error in the catch block of register controller", error);
+
   }
 }
 
-
-
-//if there are any errors then send the errors as a response
 
 
 
@@ -121,6 +178,8 @@ exports.login = (req, res) => {
           var gentoken = tokens.generateToken(payload)
           //client.set('token',gentoken,redis.print)
           client.set("token" + gentoken, gentoken, redis.print)
+          console.log("printing key in redis", "token" + result._id);
+
           //  client.keys('*',(err,res) => {
           //    console.log("key is ",res);
 
@@ -338,3 +397,79 @@ exports.doUpload = (req, res) => {
 
 
 
+//===================================================================
+// /**
+//  * @description : controller to forget the password
+//  */
+// exports.forgetPassword = (req, res) => {
+//   var responseResult = {
+//       success : false,
+//       message : "Please enter registered email id..",
+//       data : {}
+//   };
+//       service.forgetPassword(req.body, (err, result) => {
+//       try {
+//           if (err) {
+//               responseResult.message = err;
+//               res.status(404).send(responseResult)
+//           }
+//           else 
+//           {
+//               responseResult.success = true;
+//               responseResult.message = "Reset password link has been sent to your registered mail id."
+//               responseResult.result = result;
+//               const payload = {
+//                   user_id: responseResult.result._id
+//               }
+//               /**
+//                * @description : Generate token
+//                */
+//               const obj = gentoken.GenerateToken(payload);
+
+//               const url = `http://localhost:4200/user/resetPassword/${obj.token}`;
+
+//               /**
+//                * @description : Send Mail
+//                */
+//               sendmail.sendEmailFunction(url, req.body.email);
+
+//               /**
+//                * @description : Send email using this token generated
+//                */
+//               res.status(200).send(responseResult);
+//           }
+//       }
+//       catch (err) {
+//           return err;
+//       }
+//   })
+// }
+
+// /**
+// * @description : controller to reset the password of the user
+// */
+// exports.resetPassword = (req, res) => {
+//   var responseResult = {
+//       success : false,
+//       message : "Unable to reset your password..",
+//       data : {}
+//   };
+//   userService.resetPassword(req, (err, result) => {
+//       try {
+//           if (err) {
+
+//               responseResult.message = err;
+//               res.status(404).send(responseResult)
+//           }
+//           else {
+//               responseResult.success = true;
+//               responseResult.message = "Password reset successfully.."
+//               responseResult.result = result;
+//               res.status(200).send(responseResult);
+//           }
+//       }
+//       catch (err) {
+//           return err;
+//       }
+//   })
+// }

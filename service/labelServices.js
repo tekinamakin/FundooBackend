@@ -15,21 +15,6 @@ exports.addLabelServices=(labelContent,callback)=>{
 }
 
 
-// exports.deleteLabel=(labelContent,callback)=>{
-
-// console.log("printing labelContent",labelContent);
-
-// model.deleteLabel(labelContent,(err,result)=>{
-// if(err){
-//     callback(err)
-// }
-// else{
-
-// callback(null,result)
-
-// }
-// })
-// }
 
 
 
@@ -98,4 +83,77 @@ exports.deleteLabel = (labelId, callback) => {
             callback(null,result)
         }
       })
+}
+
+//---------------------------------------------------------------------------------------------------------------------------
+/**
+ * @description : service for getting all labels from database
+ */
+exports.getLabel=(req, callback)=>
+{
+    let field = {}
+    model.getLabel(req, field, (err, data) =>
+    {
+        try
+        {
+            if(err)
+                throw err;
+            else
+            {
+                return callback(null, data);
+            }
+        }
+        catch(err)
+        {
+            return callback(err);
+        }
+    })
+}
+
+/**
+ * @description : service for getting a single label from database
+ */
+exports.getLabelById=(req, callback)=>
+{
+    let field = {_id : req._id}
+    model.getLabel(req, field, (err, data) =>
+    {
+        try
+        {
+            if(err)
+                throw err
+            else
+            {
+                return callback(null, data);
+            }
+        }
+        catch(err)
+        {
+            return callback(err);
+        }
+    })
+}
+
+/**
+ * @description : service for updating a label
+ */
+exports.updateLabel=(req, callback)=>
+{
+    let field = {label : req.label}
+    model.updateLabel(req, field, (err, data) =>
+    {
+        try
+        {
+            if(err)
+                throw err;
+            else
+            {
+                return callback(null, data);
+            }
+        }
+        catch(err)
+        {
+            return callback(err);
+        }
+    })
 }

@@ -13,14 +13,12 @@ exports.createNote = (noteContent, callback) => {
             if (err) {
                 callback(err)
                 console.log("error in noteServices", err)
-            }
-            else {
+            } else {
                 callback(null, result)
                 console.log("printing result", result)
             }
         })
-    }
-    catch (err) {
+    } catch (err) {
         return res.status(400).send({
             success: false,
             message: "catch in noteServices"
@@ -36,20 +34,19 @@ exports.createNote = (noteContent, callback) => {
 exports.deleteNote = (noteID, callback) => {
     try {
         var trashParam = {
-            'trash': true
+            'trash': true,
+            'archive': false
         }
-        noteModelClassObj.updateItem(noteID,trashParam, (err, result) => {
+        noteModelClassObj.updateItem(noteID, trashParam, (err, result) => {
             if (err) {
                 console.log("Error in delete Note Services")
                 callback(err)
-            }
-            else {
+            } else {
                 console.log("Delete Note services");
                 callback(null, result)
             }
         })
-    }
-    catch (err) {
+    } catch (err) {
         return res.status(400).send({
             success: false,
             message: "catch in delete notes services"
@@ -59,21 +56,45 @@ exports.deleteNote = (noteID, callback) => {
 
 
 
+exports.isArchived = (noteID, callback) => {
+    try {
+        var trashParam = {
+            'archive': true,
+            'trash': false
+        }
+        noteModelClassObj.updateItem(noteID, trashParam, (err, result) => {
+            if (err) {
+                console.log("Error in delete Note Services")
+                callback(err)
+            } else {
+                console.log("Delete Note services");
+                callback(null, result)
+            }
+        })
+    } catch (err) {
+        return res.status(400).send({
+            success: false,
+            message: "catch in delete notes services"
+        })
+    }
+}
+
+
 
 /**
  * @description :delete a note --services
  * @param {* requested from frontend } noteID
  * @param {* response to backend} callback
  */
-exports.editTitle = (noteData, callback) => {
+exports.updateNote = (noteData, callback) => {
     try {
         console.log("trying to print data in attemptOne", noteData)
         var noteID = noteData.noteID
         var titleParam = {
             'title': noteData.title,
-            "description":noteData.description,
+            "description": noteData.description,
             "reminder": noteData.reminder,
-            "color":noteData.color
+            "color": noteData.color
 
 
         }
@@ -83,14 +104,12 @@ exports.editTitle = (noteData, callback) => {
             if (err) {
                 console.log("error editing the title")
                 callback(err)
-            }
-            else {
+            } else {
 
                 callback(null, result)
             }
         })
-    }
-    catch (error) {
+    } catch (error) {
         return callback({
             success: false,
             message: "catch in edit title service"
@@ -104,60 +123,60 @@ exports.editTitle = (noteData, callback) => {
  * @param {* requested from frontend } paramId
  * @param {* response to backend} callback
  */
-exports.isTrashed = (paramId, callback) => {
-    console.log("printing noteID", paramId)
-    noteModelClassObj.findItem({ "_id": paramId }, (err, status) => {
-        if (err) {
-            callback(err)
-        }
-        else {
-            console.log("printing whole status", status[0].trash);
-            if (status[0].trash == false) {
-                let statusData = {
-                    $set: {
-                        trash: true
-                    }
-                }
-                noteModelClassObj.updateItem(paramId, statusData, (err, result) => {
-                    if (err) {
-                        callback(err)
-                    }
-                    else {
-                        callback(null, result)
-                    }
-                })
-            }
-            else if (status.trash == true) {
-                let statusData = {
-                    $set: {
-                        trash: false
-                    }
-                }
-                noteModel.updateItem(paramId, statusData, (err, result) => {
-                    if (err) {
-                        callback(err)
-                    }
-                    else {
-                        callback(null, result)
-                    }
-                })
-            }
-        }
-    })
-}
+// exports.isTrashed = (paramId, callback) => {
+//     console.log("printing noteID", paramId)
+//     noteModelClassObj.findItem({ "_id": paramId }, (err, status) => {
+//         if (err) {
+//             callback(err)
+//         }
+//         else {
+//             console.log("printing whole status", status[0].trash);
+//             if (status[0].trash == false) {
+//                 let statusData = {
+//                     $set: {
+//                         trash: true
+//                     }
+//                 }
+//                 noteModelClassObj.updateItem(paramId, statusData, (err, result) => {
+//                     if (err) {
+//                         callback(err)
+//                     }
+//                     else {
+//                         callback(null, result)
+//                     }
+//                 })
+//             }
+//             else if (status.trash == true) {
+//                 let statusData = {
+//                     $set: {
+//                         trash: false
+//                     }
+//                 }
+//                 noteModel.updateItem(paramId, statusData, (err, result) => {
+//                     if (err) {
+//                         callback(err)
+//                     }
+//                     else {
+//                         callback(null, result)
+//                     }
+//                 })
+//             }
+//         }
+//     })
+// }
 
 
 
 //--------------------------------------Archive------------------------------------------------------->
 // exports.isArchived = (paramId, callback) => {
 //     console.log("printing noteID", paramId)
-//     if (status = false) {
+//     if (archive = false) {
 //         let data = {
 
-//             status: req.body.status
+//             archive: true
 
 //         }
-//         noteModel.isArchived(noteId, data, (err, result) => {
+//         noteModel.updateItem(paramId, data, (err, result) => {
 
 //             if (err) {
 
@@ -170,13 +189,13 @@ exports.isTrashed = (paramId, callback) => {
 //             }
 //         })
 //     }
-//     else if (status = true) {
+//     else if (archive = true) {
 
 //         let data = {
 
-//             status: false
+//             archive: false
 //         }
-//         noteModel.isArchived(noteId, data, (err, result) => {
+//         noteModel.updateItem(paramId, data, (err, result) => {
 
 //             if (err) {
 
@@ -204,13 +223,11 @@ exports.pagination = (queryData, callback) => {
                     success: false,
                     message: "error in passing query data from noteService to noteModel "
                 })
-            }
-            else {
+            } else {
                 callback(null, result)
             }
         })
-    }
-    catch (error) {
+    } catch (error) {
         console.log("printing error in catch block of pagination", error);
 
         return callback.status(400).send({
@@ -227,13 +244,19 @@ exports.searchNotes = (searchUsing, callback) => {
     console.log("just checking", searchUsing);
 
     var search = {
-        $or: [//{
+        $or: [ //{
             //  "noteId":searchUsing._id
             //  },
             {
-                "title": { $regex: searchUsing.key, $options: 'i' }
+                "title": {
+                    $regex: searchUsing.key,
+                    $options: 'i'
+                }
             }, {
-                "description": { $regex: searchUsing.key, $options: 'i' }
+                "description": {
+                    $regex: searchUsing.key,
+                    $options: 'i'
+                }
             }
         ]
     }
@@ -241,8 +264,7 @@ exports.searchNotes = (searchUsing, callback) => {
         if (err) {
 
             callback(err)
-        }
-        else {
+        } else {
 
             callback(null, data)
         }
@@ -264,16 +286,17 @@ exports.pushNotification = (userId, updateItem, callback) => {
     });
 };
 
-exports.getAllNotes = (userData,Data, callback) => {
+exports.getAllNotes = (userData, Data, callback) => {
     // var something={'userId':noteRelatedInfo.decoded.payload.userId}
     // console.log('............>',something);
-    var searchUsing= {
-        $and: [//{
+    var searchUsing = {
+        $and: [ //{
             //  "noteId":searchUsing._id
             //  },
-            {   "userId": userData.userId , 
-                "trash":Data.trash,
-                "archive":Data.archive
+            {
+                "userId": userData.userId,
+                "trash": Data.trash,
+                "archive": Data.archive
             }
         ]
     }
@@ -282,54 +305,111 @@ exports.getAllNotes = (userData,Data, callback) => {
         if (err) {
             console.log('error in note services');
             callback(err)
-        }
-        else {
+        } else {
             callback(null, result)
         }
 
     })
 }
 
-exports.getNoteData=(noteData,callback)=>{
-var searchUsing={
-    noteID:noteData.noteID
-}
-noteModelClassObj.findCard(searchUsing,(err,result)=>{
-if(err){
-    callback(err)
-}
-else{
-    callback(null,result)
-}
-})
-
-}
 
 
 
-exports.getAllTrashed=(userData,Data,callback)=>{
+// exports.getAllReminder = (userData, data, callback) => {
+// console.log("PRINTING Data",data.reminder);
+
+// var searchUsing = {
+//     //$and: [ //{
+//         //  "noteId":searchUsing._id
+//         //  },
+
+//             "userId": userData.userId,
+//            "reminder":data.reminder
+
+//     //]
+// }
+//     noteModelClassObj.findItem(searchUsing, (err, result) => {
+//         if (err) {
+//             console.log(err);
+
+//             callback(err)
+//         } else {
+
+//             callback(null, result)
+
+//         }
+
+//     })
 
 
-var searchUsing= {
-    $and: [//{
-        //  "noteId":searchUsing._id
-        //  },
-        {   "userId": userData.userId , 
-            "trash":Data.trash,
-            "archive":Data.archive
+// }
+
+
+exports.getNoteData = (noteData, callback) => {
+    var searchUsing = {
+        noteID: noteData.noteID
+    }
+    noteModelClassObj.findCard(searchUsing, (err, result) => {
+        if (err) {
+            callback(err)
+        } else {
+            callback(null, result)
         }
-    ]
-}
-noteModelClassObj.findItem(searchUsing,(err,result)=>{
-if(err){
-    console.log("printing error in getAllTrashService",err);
-    callback(err)
-}
-else{
+    })
 
-    callback(null,result)
 }
-})
+
+
+
+exports.getAllTrashed = (userData, Data, callback) => {
+
+
+    var searchUsing = {
+        $and: [ //{
+            //  "noteId":searchUsing._id
+            //  },
+            {
+                "userId": userData.userId,
+                "trash": Data.trash,
+                "archive": Data.archive
+            }
+        ]
+    }
+    noteModelClassObj.findItem(searchUsing, (err, result) => {
+        if (err) {
+            console.log("printing error in getAllTrashService", err);
+            callback(err)
+        } else {
+
+            callback(null, result)
+        }
+    })
+}
+
+exports.getArchivedNotes = (userData, Data, callback) => {
+
+
+    var searchUsing = {
+        $and: [ //{
+            //  "noteId":searchUsing._id
+            //  },
+            {
+                "userId": userData.userId,
+                "trash": Data.trash,
+                "archive": true
+
+            }
+        ]
+    }
+    noteModelClassObj.findItem(searchUsing, (err, result) => {
+        if (err) {
+            console.log("printing error in getAllTrashService", err);
+            callback(err)
+        } else {
+
+            callback(null, result)
+        }
+    })
 }
 
 exports.saveCollaborator = (collabData, callback) => {
@@ -354,13 +434,14 @@ exports.saveCollaborator = (collabData, callback) => {
 // exports.getCollabNotes = (userId, callback) => {
 //     try {
 //         var finalResult = []
-//         userData={
+//         userData = {
 //             userId: userId
-//           }
-//         noteModel.findItem(userData, (err, result) => {
+//         }
+//         noteModelClassObj.findItem(userData, (err, result) => {
 //             if (err) {
 //                 callback(err)
-//             } else {userInfo={ _id: userId }
+//             } else {
+//                 userInfo = { _id: userId }
 //                 userModel.(userInfo, (errorUser, resultUser) => {
 //                     if (errorUser) {
 //                         callback(errorUser)
@@ -379,7 +460,7 @@ exports.saveCollaborator = (collabData, callback) => {
 //                             }
 //                             finalResult.push(userNote)
 //                             // console.log("final Result  "+ i ,userNote);
-//                         } 
+//                         }
 //                         noteModel.getCollabOwnerUserId(userData, (errorCollab, resultOwnerCollab) => {
 //                             if (errorCollab) {
 //                                 callback(errorCollab)
@@ -404,10 +485,54 @@ exports.saveCollaborator = (collabData, callback) => {
 //     }
 // }
 
+exports.getAllReminder = (data, callback) => {
+
+    noteModelClassObj.findItem(data, (err, data) => {
+        // try {
+        if (err) {
+            return callback(err);
+        } else {
+            return callback(null, data);
+        }
+        // } catch (err) {
+        //     return callback(err);
+        // }
+    })
 
 
+}
 
 
+// exports.addRatings=async(obj)=>{
 
+//     var updateField={
+//         "ratings":obj.ratings
+//     }
+//     var noteId={
+//         noteId=obj.noteId
+//     }
+// //  const result=await noteModelClassObj.updateItem(noteId,updateField)
+// return new Promise((resolve,reject)=>{
+//     const result=await noteModelClassObj.updateItem(noteId,updateField)
 
+//     resolve(result)
 
+exports.addRatings = (obj, callback) => {
+    var updateField = {
+        "ratings": obj.ratings
+    }
+
+    var noteID = obj.noteID
+
+    console.log("printing noteID", noteID);
+
+    noteModelClassObj.updateItem(noteID, updateField, (err, result) => {
+        if (err) {
+            callback(err)
+        } else {
+
+            callback(null, result)
+        }
+
+    })
+}

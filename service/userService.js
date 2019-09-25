@@ -1,77 +1,74 @@
 const userModel = require('../model/userModel')
 
+const bcrypt = require('bcrypt')
 
-
-//registration service
-// exports.registration = (data, callback) => {
-// console.log("service",data)
-// //passing data to registration in model
-//   userModel.registration (data, (err, result) => {
-//     console.log("service model",data)
-
-
-//     if (err) {
-//       console.log("service error");
-//       callback(err);
+// exports.register = (userData, callback) => {
+//     try {
+//         userModel.create(userData, (err, result) => {
+//             if (err || result === undefined) {
+//                 console.log("Service Error")
+//                 return callback(err);
+//             }
+//             else {
+//                 console.log("Service In ")
+//                 return callback(null, result)
+//             }
+//         })
 //     }
-//     else {
-//       console.log("In service", result);
-//       callback(null, result);
+//     catch (err) {
+//         console.log("Catch Error In services ", err)
+//         return callback(err)
 //     }
-
-
-
-//   })
-
 // }
 
+//registration using promises
 
-exports.registration = (userData, callback) => {
-    try {
-        userModel.registration(userData, (err, result) => {
-            if (err || result === undefined) {
-                console.log("Service Error")
-                return callback(err);
-            }
-            else {
-                console.log("Service In ")
-                return callback(null, result)
-            }
+function encryptPassword(password, callback) {
+
+    bcrypt.hash(password, 10, (err, result) => {
+        if (err) {
+            return callback(err)
+        }
+        else {
+            return callback(null, result)
+        }
+    })
+}
+
+exports.register = (userData) => {
+    var initPromise = userModel.findUser(userData.email)
+    return new Promise((resolve, reject) => {
+        initPromise.then((data) => {
+            encryptPassword(userData.password, (err, encryptedPassword) => {
+                if (err) {
+                    console.log(err);
+                    reject(err)
+                }
+                else {
+                    let userDetails = {
+                        "firstName": userData.firstName,
+                        "lastName": userData.lastName,
+                        "email": userData.email,
+                        "password": userData.password
+                    }
+                    var saveUserPromise = userModel.saveUserModel(userDetails)
+                    saveUserPromise.then((data) => {
+                        resolve({ "data": data })
+                    }).catch((err) => {
+                        reject({ "error": err })
+                    })
+                }
+            })
+        }).catch((err) => {
+            reject({ "error": err })
         })
-    }
-    catch (err) {
-        console.log("Catch Error In services ", err)
-        return callback(err)
-    }
+    })
+
 }
 
 
 
-//login service
-// exports.login=(data,callback)=>{
-// console.log("inside the login-service"+data)
-
-// console.log('login service')
-// //passing data to login method in Model
-// userModel.login(data,(err,result)=>{
-//   console.log("check loginmodel",result)
-// if(err){
-// console.log(err)
-// callback(err)
-
-// }
-// else
-// callback(null,result)
-// //console.log("testing",result)
-
-// })
-
-
-// }
-
-
-
-exports.login = (userData,callback) => {
+exports.login = (userData, callback) => {
     try {
         userModel.login(userData, (err, result) => {
             if (err || result === undefined) {
@@ -140,3 +137,52 @@ exports.reset = (data, callback) => {
 }
 //--------------------------------------------------------------------------------------------
 
+// /** 
+//  * @description : forget purpose
+//  */
+// exports.forgetPassword=(data,callback)=>
+// {
+//     userModel.forgetPassword(data,(err,result)=>
+//     {
+//         try
+//         {
+//             if(err)
+//             {
+//                 callback(err);
+//             }
+//             else 
+//             {
+//                 callback(null,result)      
+//             }
+//         }
+//         catch(err)
+//         {
+//             return callback(err);
+//         }
+//     })
+// }
+
+// /**
+//  * @description : reset purpose
+//  */
+// exports.resetPassword=(req,callback)=>
+// {
+//     userModel.resetPassword(req,(err,result)=>
+//     {
+//         try
+//         {
+//             if(err)
+//             {
+//                 callback(err);
+//             }
+//             else 
+//             {
+//                 callback(null,result)
+//             }
+//         }
+//         catch(err)
+//         {
+//             return callback(err);
+//         }
+//     })
+// } 

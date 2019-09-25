@@ -16,7 +16,9 @@ var noteSchema = mongoose.Schema({
         //required: ['true', 'description required']
     },
     reminder: {
-        type: Date
+        type: Date,
+        default: null
+
     },
     color: {
         type: String
@@ -29,6 +31,10 @@ var noteSchema = mongoose.Schema({
         type: Boolean,
         default: 'false'
     },
+    ratings: {
+        type: Number,
+
+    },
 
     label: [
         {
@@ -37,6 +43,7 @@ var noteSchema = mongoose.Schema({
         }
     ]
 },
+
     {
 
         timestamps: true
@@ -65,17 +72,17 @@ class NoteModel {
         })
     }
 
-   /**
-    * find items using this find function
-    * @param {*} searchUsing 
-    * @param {*} callback 
-    */
+    /**
+     * find items using this find function
+     * @param {*} searchUsing 
+     * @param {*} callback 
+     */
     findItem(searchWith, callback) {
         console.log("checking searchusing id", searchWith);
-        
+
         note.find(searchWith)
-                     .populate('Label')
-                     .exec(function(err, result) {
+            .populate('label')
+            .exec(function (err, result) {
                 if (err) {
                     callback(err)
                 }
@@ -88,8 +95,8 @@ class NoteModel {
 
     findCard(searchWith, callback) {
         console.log("checking searchusing id", searchWith);
-        
-        note.findOne({_id:searchWith.noteID},(err,data)=>{
+
+        note.findOne({ _id: searchWith.noteID }, (err, data) => {
             if (err) {
                 callback(err)
             }
@@ -98,7 +105,7 @@ class NoteModel {
 
             }
         })
-                   
+
     }
 
     /**
@@ -107,8 +114,9 @@ class NoteModel {
      * @param {*} updateField 
      * @param {*} callback 
      */
+
     updateItem(itemId, updateField, callback) {
-       // console.log("printttt", itemId, updateField);
+        // console.log("printttt", itemId, updateField);
 
         note.findByIdAndUpdate({ '_id': itemId }, updateField, (err, result) => {
             if (err) {

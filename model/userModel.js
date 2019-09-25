@@ -9,7 +9,7 @@ var tokenPayload = require('../middleware/tokenAccess');
 const userSchema = new Schema({
     firstName: {
         type: String,
-        required: [true,'first nme is requireds'],
+        required: [true, 'first nme is requireds'],
     },
     lastName: {
         type: String,
@@ -32,264 +32,117 @@ const userSchema = new Schema({
 var user = mongoose.model('User', userSchema)
 function userModel() { }//class function
 
-//creating a registration model
-userModel.prototype.registration = (userData, callback) => {
-    
-    //checking if email address already exists
-    user.findOne({ "email": userData.email }, (err, data) => {
-        console.log("content in data" + data)
-        if (err) {
-            console.log('error in registration', err)
-            callback(err)
-        }
-        else {
-            if (data > 0) {
-                //checks if user is already present 
-                console.log("user already exists", data)
-                callback('user already has an account')
-            }
 
+userModel.prototype.findUser = (email) => {
+    return new Promise((resolve, reject) => {
+        user.find({ "email": email }, ['_id', "firstName", "lastName", "password"]).then((data) => {
+            if (data.length > 0) {
+                reject({ "message": "email already exist", "data": data })
+            }
             else {
-                //creates a new user 
-
-                var newUser = new user({
-                    "firstName": userData.firstName,
-                    "lastName": userData.lastName,
-                    "email": userData.email,
-                    "password": userData.password
-
-
-
-                });
-                //using bcrypt to hash the password
-                bcrypt.genSalt(10, (err, salt) => {
-                    bcrypt.hash(newUser.password, salt, (err, hash) => {
-                        if (err) throw err;
-                        newUser.password = hash;
-                        //     // Save the user in the database
-                        newUser.save((err, result) => {
-                            if (err) {
-
-                                callback(err)
-                            }
-                            else {
-
-                                console.log('user registered successfully')
-
-                                callback(null, result)
-                            }
-
-                        })
-                    });
-                });
-
-
-
-
-
-
+                resolve({ "data": data })
             }
-        }
-    })
+        }).catch((err) => {
+            reject({ "message": "error in finding email" })
+        })
 
-    // 
+    })
 }
 
 
-
-// userModel.prototype.registration = (req,res) => {
-//     try{
-//         user.findOne({ 'email' : req.email },(err,data) => {
-//             if(err){
-//                 console.log('Error in Registration ', err);
-//                 return res(err)
-//             }
-//             else if(data != null){
-//                 console.log("Email Already Exists")
-//                 return res(err)
-//             }
-//             else{
-//                     console.log(data);
-
-//                    // var pass = req.password;
-//                     req.password = bcrypt.hashSync(req.password,saltRound);
-//                     var newUser = new user({
-//                         "firstName"       : req.firstName,
-//                         "lastName"        : req.lastName,
-//                         "email"           : req.email,
-//                         "password"        : req.password,
-//                         "isVerified"      : 'false'
-                        
-//                     });                  
-//                     const payload = {
-//                     email    : req.email
-                
-//                     }
-//                 //     var token = tokenPayload.generateToken(payload)
-//                 //     localStorage.setItem('token','token');
-//                 //   console.log("New User",newUser)
-//                 //     newUser.save((err,result) => {
-//                 //         if(err){
-//                 //             console.log("Error In Save Registration")
-//                 //             res(err)
-//                 //         }
-//                 //         else{
-//                 //             console.log("Registration Successfully..!!")
-//                 //             var url = 'http://localhost:3000/'+ token ;
-//                 //             console.log('Url',url)
-//                 //             // mail.sendEmail(url,newUser.email,pass);
-//                 //             res(null,result);
-//                 //         }
-//                 //     }) 
-                    
-//                     newUser.save()
-//                         .then((response) => {
-//                             var token = tokenPayload.generateToken(payload)
-//                             console.log("token",token)
-//                             var url = `${process.env.isVerified}/${token}` ;
-//                             console.log('Url',url)
-//                             //mail.sendEmail(url,newUser.email,pass);
-//                             //localStorage.setItem('token',token)
-//                             console.log("Registration Successfully..!!")
-//                             return res(null,response);
-//                         })
-//                         .catch(err => {
-//                             console.log("Error In Registration", err);
-//                             return res(err);
-//                         })
-//         }
-    
-//     })
-// }
-// catch(err){
-//     console.log("Error in registration catch block",err);
-//     res(err)
-// }
-// }
+userModel.prototype.saveUserModel = (userData) => {
+    return new Promise((resolve, reject) => {
+        let userDetails = new user({
+            "firstName": userData.firstName,
+            "lastName": userData.lastName,
+            "email": userData.email,
+            "password": userData.password
+        })
+        userDetails.save().then((data) => {
+            resolve({ "message": "registration succesful" })
+        }).catch((err) => {
+            reject({ "message": "registration failed" })
+        })
+    })
+}
 
 
+// //creating a registration model
+// userModel.prototype.create = (userData, callback) => {
 
-
-
-//model login
-// userModel.prototype.login = (body, callback) => {
-//     console.log("model ", body);
-
-//     //check if email address already exists
-//     user.findOne({ "email": body.email }, (err, data) => {
+//     //checking if email address already exists
+//     user.findOne({ "email": userData.email }, (err, data) => {
+//         console.log("content in data" + data)
 //         if (err) {
-//             callback(err);
+//             console.log('error in registration', err)
+//             callback(err)
 //         }
-//         else if (data !== null) {
-//             //comparing currently entered password with encrypted password in db
-//             bcrypt.compare(body.password, data.password).then(function (res) {
-//                 //if res is true then login successfull else not
-                    
-//                 if (res) {
-                   
-                                  
-                    
-                    
-//                      var token = jwt.sign({ email: body.email }, "secretkey", { expiresIn: 43200000 });
-//                     console.log("data.firstName" , data.firstName)
-//                     console.log("token is printed after login: ", token);
-//                     callback(null, {
-//                         token: token,
-//                         userId: data._id,
-//                         firstName: data.firstName
+//         else {
+//             if (data > 0) {
+//                 //checks if user is already present 
+//                 console.log("user already exists", data)
+//                 callback('user already has an account')
+//             }
+
+//             else {
+//                 //creates a new user 
+
+//                 var newUser = new user({
+//                     "firstName": userData.firstName,
+//                     "lastName": userData.lastName,
+//                     "email": userData.email,
+//                     "password": userData.password
+
+
+
+//                 });
+//                 //using bcrypt to hash the password
+//                 bcrypt.genSalt(10, (err, salt) => {
+//                     bcrypt.hash(newUser.password, salt, (err, hash) => {
+//                         if (err) throw err;
+//                         newUser.password = hash;
+//                         //     // Save the user in the database
+//                         newUser.save((err, result) => {
+//                             if (err) {
+
+//                                 callback(err)
+//                             }
+//                             else {
+
+//                                 console.log('user registered successfully')
+
+//                                 callback(null, result)
+//                             }
+
+//                         })
 //                     });
-//                 }
-
-
-//                 else {
-//                     console.log("Incorrect password");
-//                     callback("Incorrect password");
+//                 });
 
 
 
-//                 }
-
-//             })
 
 
-//                 // .catch = (err) => {
-//                 //     console.log("invalid user");
-//                 //     callback(err + "invalid user");
-//                 // }
 
+//             }
 //         }
-//         else{
-//             console.log("invalid user");
-//                 callback(  "invalid user");
-//         }
-
 //     })
-// }
 
-//model login
-// userModel.prototype.login = (body, callback) => {
-//     console.log("model ", body);
-
-//     //check if email address already exists
-//     user.findOne({ "email": body.email }, (err, data) => {
-//         if (err) {
-//             callback(err);
-//         }
-//         else if (data !== null) {
-//             //comparing currently entered password with encrypted password in db
-//             bcrypt.compare(body.password, data.password).then(function (res) {
-//                 //if res is true then login successfull else not
-//                 if (res) {
-
-                    
-                    
-//                     //var token = jwt.sign({ email: body.email }, "secretkey", { expiresIn: 43200000 });
-//                     console.log("data.firstName" , data.firstName)
-//                     console.log("token is printed after login: ", token);
-//                     callback(null, {
-//                         token: token,
-//                         userId: data._id,
-//                         firstName: data.firstName
-//                     });
-//                 }
-
-
-//                 else {
-//                     console.log("Incorrect password");
-//                     callback("Incorrect password");
-
-
-
-//                 }
-
-//             })
-
-
-//                 // .catch = (err) => {
-//                 //     console.log("invalid user");
-//                 //     callback(err + "invalid user");
-//                 // }
-
-//         }
-//         else{
-//             console.log("invalid user");
-//                 callback(  "invalid user");
-//         }
-
-//     })
+//     // 
 // }
 
 
 
-userModel.prototype.login =(data,callback) =>{
-    try{
-        user.findOne({email : data.email},(err,result) => {
+
+
+userModel.prototype.login = (data, callback) => {
+    try {
+        user.findOne({ email: data.email }, (err, result) => {
             //console.log("What is in result",result)
-            if(err){
+            if (err) {
                 console.log("Please Enter Valid Email Address..!!")
                 callback(err)
             }
-            else if(result === null){
+            else if (result === null) {
                 console.log("Invalid User")
                 return callback(err)
             }
@@ -298,53 +151,54 @@ userModel.prototype.login =(data,callback) =>{
             //     console.log("verify First..!!");
             //     callback(err)
             // }
-            else{
-                
-                bcrypt.compare(data.password,result.password,(err,res)=> {
-                    if(!res){
+            else {
+
+                bcrypt.compare(data.password, result.password, (err, res) => {
+
+                    if (!res) {
                         console.log("Password Incorrect");
                         return callback(err)
                     }
-                    else{
+                    else {
                         console.log("Login Successfully");
-                        return callback(null,result)
+                        return callback(null, result)
                     }
                 })
-                    
+
             }
         })
     }
-    catch(err){
-        console.log("Error in login catch block",err);
-        res(err)   
+    catch (err) {
+        console.log("Error in login catch block", err);
+        res(err)
     }
 }
 
 
 
-userModel.prototype.verifyUser = (req,res) => {
-    try{
-        user.findOne({email : req.email},(err,result) => {
-            if(err){
+userModel.prototype.verifyUser = (req, res) => {
+    try {
+        user.findOne({ email: req.email }, (err, result) => {
+            if (err) {
                 console.log("No User Found..!!")
                 res(err)
             }
-            else{
+            else {
                 var payload = {
-                    _id : result._id
+                    _id: result._id
                 }
                 var token = tokenPayload.generateToken(payload)
-                console.log("token",token)
-                var url = `${process.env.resetPassword}/${token}` ;
-                console.log('Url',url)
-                mail.sendEmail(url,req.email);
+                console.log("token", token)
+                var url = `${process.env.resetPassword}/${token}`;
+                console.log('Url', url)
+                mail.sendEmail(url, req.email);
                 console.log("User Available")
-                res(null,result)
+                res(null, result)
             }
         })
     }
-    catch(err){
-        console.log("Error forget verifcation catch block",err);
+    catch (err) {
+        console.log("Error forget verifcation catch block", err);
         res(err)
     }
 }
@@ -352,7 +206,7 @@ userModel.prototype.verifyUser = (req,res) => {
 
 
 
-userModel.prototype.forgetPassword=(res,callback)=>{
+userModel.prototype.forgetPassword = (res, callback) => {
 
     //check the email address 
     user.findOne({ "email": res.body.email }, function (err, result) {
@@ -379,6 +233,50 @@ userModel.prototype.forgetPassword=(res,callback)=>{
 
 }
 
+
+
+//===========================================================================================================================>
+// /**
+//  * @description : API for the forget password
+//  */
+// usermodel.prototype.forgetPassword = (data, callback) => {
+//     user.findOne({ "email": data.email }, (err, result) => {
+//         try {
+//             if (err)
+//                 throw err;
+//             else {
+//                 if (result !== null && data.email == result.email) {
+//                     callback(null, result);
+//                 }
+//                 else {
+//                     callback("inncorrect mail")
+//                 }
+//             }
+//         }
+//         catch (err) {
+//             return callback(err);
+//         }
+//     })
+// }
+
+// /**
+//  * @description : API for reset password
+//  */
+// usermodel.prototype.resetPassword = (data, callback) => {
+//     let newpassword = bcrypt.hashSync(data.body.password, salt);
+//     user.updateOne({ _id: data.decoded.payload.user_id }, { $set: { password: newpassword } }, (err, result) => {
+//         try {
+//             if (err)
+//                 throw err;
+//             else {
+//                 callback(null, result);
+//             }
+//         }
+//         catch (err) {
+//             return callback(err);
+//         }
+//     })
+// }
 
 
 
