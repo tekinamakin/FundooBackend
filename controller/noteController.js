@@ -1,6 +1,9 @@
 const noteServices = require('../service/noteServices')
 const logger = require('../logger/logger')
 const redis = require('../middleware/redisService')
+let details = {};
+
+
 /**
  * @description : creating a new note using this api.
  * @param {* requested from frontend } req
@@ -8,40 +11,58 @@ const redis = require('../middleware/redisService')
  */
 exports.createNote = (req, res) => {
     try {
-        var response = {}
-        var errors = req.validationErrors()
-        var noteData = {
-            userId: req.decoded.payload._id,
-            title: req.body.title,
-            description: req.body.description,
-            reminder: req.body.reminder,
-            color: req.body.color,
-            label: req.body.label,
-            archive: req.body.archive
-        }
-
-        if (errors) {
-
-            response.success = false;
-            response.errors = errors
-            return res.status(400).send(response)
-        } else {
-            noteServices.createNote(noteData, (err, result) => {
+        if (req.body.title != null && req.body.description != null) {
+            details.id = req.decoded.payload._id
+            redis.delRedis(details, (err, cacheDelete) => {
                 if (err) {
-
-                    response.success = false
-                    //response.error = err
-                    logger.logger.error("Error in createNote  api")
-                    return res.status(400).send(response)
-
+                    console.log(err)
                 } else {
-                    response.success = true
-                    response.result = result
-                    return res.status(200).send(response)
+                    console.log(cacheDelete)
                 }
             })
+            var response = {}
+            var errors = req.validationErrors()
+
+
+            if (errors) {
+
+                response.success = false;
+                response.errors = errors
+                return res.status(400).send(response)
+            } else {
+                var noteData = {
+                    userId: req.decoded.payload._id,
+                    title: req.body.title,
+                    description: req.body.description,
+                    reminder: req.body.reminder,
+                    color: req.body.color,
+                    label: req.body.label,
+                    archive: req.body.archive
+                }
+                noteServices.createNote(noteData, (err, result) => {
+                    if (err) {
+
+                        response.success = false
+                        //response.error = err
+                        logger.logger.error("Error in createNote  api")
+                        return res.status(400).send(response)
+
+                    } else {
+                        response.success = true
+                        response.result = result
+                        return res.status(200).send(response)
+                    }
+                })
+            }
         }
-    } catch (error) {
+        else {
+            response.success = true
+            response.result = result
+            return res.status(200).send(response)
+
+        }
+    }
+    catch (error) {
         console.log("catching error in catch block of controller")
         res.status(400).send({
             success: false,
@@ -98,6 +119,7 @@ exports.deleteNote = (req, res) => {
  */
 exports.updateNote = (req, res) => {
     try {
+
         req.checkBody('noteID', "note Id required").not().isEmpty();
         var response = {}
         var errors = req.validationErrors()
@@ -330,43 +352,48 @@ exports.pushNotification = (req, res) => {
 
 exports.getAllNotes = (req, res) => {
     try {
-        //var details = {}
         var response = {}
-        //redis.getRedis(details, (error, data) => {
-        //if (error) {
-
-        var userId = {
-            'userId': req.decoded.payload._id
-        }
-        var setValue = {
-            "trash": false,
-            "archive": false
-        }
-        console.log("printing userId over here =====>", userId);
-
-        noteServices.getAllNotes(userId, setValue, (err, result) => {
-            if (err) {
-                response.status = false;
-                response.error = err;
-                res.status(500).send(response);
-            } else {
-
-                response.status = true;
-                response.result = result;
-                res.status(200).send(result)
+        details.id = req.decoded.id
+        redis.getRedis(details, (err, data) => {
+            if (data) {
+                response.status = true,
+                    response.result = data,
+                    res.status(200).send(response)
             }
+            else {
+
+                var userId = {
+                    'userId': req.decoded.payload._id
+                }
+                var setValue = {
+                    "trash": false,
+                    "archive": false
+                }
+                console.log("printing userId over here =====>", userId);
+
+                noteServices.getAllNotes(userId, setValue, (err, result) => {
+                    if (err) {
+                        response.status = false;
+                        response.error = err;
+                        res.status(500).send(response);
+                    } else {
+                        details.id = req.decoded.id
+                        details.value = result
+                        redis.setRedis(details, (err, data) => {
+                            if (data) {
+                                response.status = true;
+                                response.data = result;
+                                res.status(200).send(response)
+                            }
+                          
+                               
+                            
+                        })
+                    }
+                })
+            }
+
         })
-        //}
-
-        // else {
-        //     console.log("printing user id", req.decoded.payload._id);
-
-        //     response.id = req.decoded.payload._id
-        //     // response.data = result
-        //     response.status = true
-        //     response.result = data
-        //     res.status(200).send(response)
-        // }
     }
     catch (error) {
         console.log("----------catch in getAllNotes", error);
@@ -411,8 +438,8 @@ exports.getAllTrashed = (req, res) => {
                 res.status(200).send(result)
             }
         })
+
     }
-    //}
     catch (error) {
         console.log("----------catch in getAllNotes", error);
 
@@ -422,6 +449,7 @@ exports.getAllTrashed = (req, res) => {
         })
     }
 }
+
 
 
 

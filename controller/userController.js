@@ -3,6 +3,8 @@ const service = require('../service/userService')
 const s3 = require('../middleware/s3.config');
 
 const tokens = require("../middleware/tokenAccess")
+//const redisCache = require('../middleware/redisService')
+
 
 module.exports.register = (req, res) => {
   try {
@@ -140,7 +142,7 @@ module.exports.register = (req, res) => {
 
 exports.login = (req, res) => {
   try {
-
+    var details={}
     req.checkBody('email').isEmail()
       .withMessage('Email is not valid')
 
@@ -177,6 +179,14 @@ exports.login = (req, res) => {
           }
           var gentoken = tokens.generateToken(payload)
           //client.set('token',gentoken,redis.print)
+          // details.id = result.email
+          // details.value = "token" + gentoken
+          // redis.setRedis(details,(err,result)=>{
+          //   if(result){
+          //     console.log("Token is set into rerdis",result);
+              
+          //   }
+          // })
           client.set("token" + gentoken, gentoken, redis.print)
           console.log("printing key in redis", "token" + result._id);
 
